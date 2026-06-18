@@ -1,0 +1,46 @@
+# This is a Databricks asset bundle definition for my_project.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: restaurant_analytics_lakehouse
+  uuid: a040dfba-8274-43ba-92be-85c6ef0f17bf
+
+artifacts:
+  python_artifact:
+    type: whl
+    build: uv build --wheel
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+sync:
+  include:
+    - notebooks/**
+
+targets:
+  dev:
+    # The default target uses 'mode: development' to create a development copy.
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default.
+    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-1049848684377647.7.azuredatabricks.net
+
+    presets:
+      # Set dynamic_version: true on all artifacts of type "whl".
+      # This makes "bundle deploy" add a timestamp to wheel's version before uploading,
+      # new wheel takes over the previous installation even if actual wheel version is unchanged.
+      # See https://docs.databricks.com/aws/en/dev-tools/bundles/settings
+      artifacts_dynamic_version: true
+
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-1049848684377647.7.azuredatabricks.net
+      # We explicitly deploy to /Workspace/Users/a1ae6753-a247-46bc-b56f-4e5894413f3c to make sure we only have a single copy.
+      root_path: /Workspace/Users/a1ae6753-a247-46bc-b56f-4e5894413f3c/.bundle/${bundle.name}/${bundle.target}
+    permissions:
+      - service_principal_name: a1ae6753-a247-46bc-b56f-4e5894413f3c
+        level: CAN_MANAGE
