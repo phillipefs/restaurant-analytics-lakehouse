@@ -219,3 +219,13 @@ __marimo__/
 
 # Local IDE settings
 .idea
+
+# Databricks local state and settings
+.databricks/
+build/
+dist/
+__pycache__/
+*.egg-info
+.venv/
+scratch/**
+!scratch/README.md
