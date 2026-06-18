@@ -1,0 +1,7 @@
+#Setup environment variable dependencies
+python-dotenv==1.2.1
+
+#Setup data dependencies
+azure-eventhub==5.15.1
+pandas==2.3.3
+faker==39.0.0
