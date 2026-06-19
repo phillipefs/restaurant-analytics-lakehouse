@@ -48,7 +48,7 @@ jobs:
       || (github.event_name == 'workflow_dispatch' && (inputs.target == 'dev' || inputs.target == 'both'))
     steps:
       - name: Checkout código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configurar Python
         uses: actions/setup-python@v6
@@ -62,7 +62,7 @@ jobs:
           enable-cache: true
 
       - name: Azure Login (OIDC)
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -106,7 +106,7 @@ jobs:
 
     steps:
       - name: Checkout código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configurar Python
         uses: actions/setup-python@v6
@@ -120,7 +120,7 @@ jobs:
           enable-cache: true
 
       - name: Azure Login (OIDC)
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
