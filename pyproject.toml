@@ -29,7 +29,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/my_project"]
+packages = ["src"]
 
-[project.scripts]
-main = "my_project.main:main"
+# [project.scripts]
+# main = "my_project.main:main"
