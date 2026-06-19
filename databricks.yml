@@ -1,5 +1,5 @@
 # This is a Databricks asset bundle definition for my_project.
-# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation. 
 bundle:
   name: restaurant_analytics_lakehouse
   uuid: a040dfba-8274-43ba-92be-85c6ef0f17bf
