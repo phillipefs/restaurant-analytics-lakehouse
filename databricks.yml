@@ -23,10 +23,10 @@ targets:
     # - Deployed resources get prefixed with '[dev my_user_name]'
     # - Any job schedules and triggers are paused by default.
     # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
-    mode: development
     default: true
     workspace:
       host: https://adb-1049848684377647.7.azuredatabricks.net
+      root_path: /Workspace/projects/${bundle.name}
 
     presets:
       # Set dynamic_version: true on all artifacts of type "whl".
@@ -34,13 +34,16 @@ targets:
       # new wheel takes over the previous installation even if actual wheel version is unchanged.
       # See https://docs.databricks.com/aws/en/dev-tools/bundles/settings
       artifacts_dynamic_version: true
+      tags:
+        env: development
+        project: ${bundle.name}
 
   prod:
     mode: production
     workspace:
       host: https://adb-1049848684377647.7.azuredatabricks.net
       # We explicitly deploy to /Workspace/Users/a1ae6753-a247-46bc-b56f-4e5894413f3c to make sure we only have a single copy.
-      root_path: /Workspace/Users/a1ae6753-a247-46bc-b56f-4e5894413f3c/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Workspace/projects/${bundle.name}
     permissions:
       - service_principal_name: a1ae6753-a247-46bc-b56f-4e5894413f3c
         level: CAN_MANAGE
