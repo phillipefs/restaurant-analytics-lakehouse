@@ -2,12 +2,14 @@ name: Deploy Lakehouse Platform
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
     paths:
       - "databricks.yml"
+      - "pyproject.toml"
       - "resources/**"
       - "notebooks/**"
       - "src/**"
+      - ".github/workflows/**"
       - "!README.md"
       - "!LICENSE"
   workflow_dispatch:
@@ -24,7 +26,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-infoprice-${{ github.ref }}
+  group: deploy-restaurant-analytics-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -35,6 +37,11 @@ jobs:
     name: DEV - Validate & Deploy
     runs-on: ubuntu-latest
     environment: dev
+    env:
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_AUTH_TYPE: oauth-m2m
+      DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
     # DEV roda no push para master OU manualmente com target=dev|both
     if: >
       (github.event_name == 'push' && github.ref == 'refs/heads/master')
@@ -42,6 +49,17 @@ jobs:
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          version: "0.11.19"
+          enable-cache: true
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -58,36 +76,28 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sudo sh
           databricks -v
 
-      - name: Mostrar Summary (DEV)
+      - name: Validar e fazer deploy (DEV)
         working-directory: ${{ env.PATH_PROJECT }}
-        env:
-          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_AUTH_TYPE: oauth-m2m
-          DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
-          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
-        run: |
-          echo "== [DEV] databricks bundle summary (target=${{ vars.ENV_NAME }}) =="
-          databricks bundle summary -t "${{ vars.ENV_NAME }}"
-
-      - name: Validar e Deploy (DEV)
-        working-directory: ${{ env.PATH_PROJECT }}
-        env:
-          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_AUTH_TYPE: oauth-m2m
-          DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
-          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
         run: |
           set -euo pipefail
-          echo "== [DEV] Validando bundle (target=${{ vars.ENV_NAME }}) =="
-          databricks bundle validate -t "${{ vars.ENV_NAME }}" --var run_as_spn=${{ vars.SPN_APP_ID }}
-          echo "== [DEV] Deploy bundle =="
-          databricks bundle deploy -t "${{ vars.ENV_NAME }}" --var run_as_spn=${{ vars.SPN_APP_ID }}
+          TARGET="${{ vars.ENV_NAME }}"
+          RUN_AS_SPN="${{ vars.SPN_APP_ID }}"
+
+          uv --version
+          databricks bundle summary -t "$TARGET" --var "run_as_spn=$RUN_AS_SPN"
+          databricks bundle validate -t "$TARGET" --var "run_as_spn=$RUN_AS_SPN"
+          databricks bundle deploy -t "$TARGET" --var "run_as_spn=$RUN_AS_SPN"
 
   prod:
     name: PROD - Validate & Deploy
     runs-on: ubuntu-latest
     environment: prod
     needs: dev
+    env:
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_AUTH_TYPE: oauth-m2m
+      DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
     if: >
       always()
       && github.event_name == 'workflow_dispatch'
@@ -98,6 +108,17 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
+      - name: Configurar Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          version: "0.11.19"
+          enable-cache: true
+
       - name: Azure Login (OIDC)
         uses: azure/login@v2
         with:
@@ -113,27 +134,14 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sudo sh
           databricks -v
 
-      - name: Mostrar Summary (PRD)
+      - name: Validar e fazer deploy (PRD)
         working-directory: ${{ env.PATH_PROJECT }}
-        env:
-          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_AUTH_TYPE: oauth-m2m
-          DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
-          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
-        run: |
-          echo "== [PRD] databricks bundle summary (target=${{ vars.ENV_NAME }}) =="
-          databricks bundle summary -t "${{ vars.ENV_NAME }}"
-
-      - name: Validar e Deploy (PRD)
-        working-directory: ${{ env.PATH_PROJECT }}
-        env:
-          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_AUTH_TYPE: oauth-m2m
-          DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
-          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
         run: |
           set -euo pipefail
-          echo "== [PRD] Validando bundle (target=${{ vars.ENV_NAME }}) =="
-          databricks bundle validate -t "${{ vars.ENV_NAME }}" --var run_as_spn=${{ vars.SPN_APP_ID }}
-          echo "== [PRD] Deploy bundle =="
-          databricks bundle deploy -t "${{ vars.ENV_NAME }}" --var run_as_spn=${{ vars.SPN_APP_ID }}
+          TARGET="${{ vars.ENV_NAME }}"
+          RUN_AS_SPN="${{ vars.SPN_APP_ID }}"
+
+          uv --version
+          databricks bundle summary -t "$TARGET" --var "run_as_spn=$RUN_AS_SPN"
+          databricks bundle validate -t "$TARGET" --var "run_as_spn=$RUN_AS_SPN"
+          databricks bundle deploy -t "$TARGET" --var "run_as_spn=$RUN_AS_SPN"
