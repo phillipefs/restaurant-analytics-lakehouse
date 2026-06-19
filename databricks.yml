@@ -42,8 +42,8 @@ targets:
     mode: production
     workspace:
       host: https://adb-1049848684377647.7.azuredatabricks.net
-      # We explicitly deploy to /Workspace/Users/a1ae6753-a247-46bc-b56f-4e5894413f3c to make sure we only have a single copy.
+      # We explicitly deploy to /Workspace/Users/94a0841a-2472-4fe0-8264-70d16f025255 to make sure we only have a single copy.
       root_path: /Workspace/projects/${bundle.name}
     permissions:
-      - service_principal_name: a1ae6753-a247-46bc-b56f-4e5894413f3c
+      - service_principal_name: 94a0841a-2472-4fe0-8264-70d16f025255
         level: CAN_MANAGE
