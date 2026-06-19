@@ -4,6 +4,9 @@ bundle:
   name: restaurant_analytics_lakehouse
   uuid: a040dfba-8274-43ba-92be-85c6ef0f17bf
 
+variables:
+  run_as_spn: { default: " " }
+
 artifacts:
   python_artifact:
     type: whl
