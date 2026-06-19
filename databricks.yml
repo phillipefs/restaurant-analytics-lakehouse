@@ -23,7 +23,6 @@ sync:
 targets:
   dev:
     default: true
-    mode: development
     workspace:
       host: https://adb-1049848684377647.7.azuredatabricks.net
       root_path: /Workspace/projects/${bundle.name}
