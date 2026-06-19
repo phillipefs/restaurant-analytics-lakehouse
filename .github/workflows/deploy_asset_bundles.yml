@@ -1,0 +1,139 @@
+name: Deploy Lakehouse Platform
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - "databricks.yml"
+      - "resources/**"
+      - "notebooks/**"
+      - "src/**"
+      - "!README.md"
+      - "!LICENSE"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Deploy target environment"
+        type: choice
+        required: true
+        default: dev
+        options: [dev, prod, both]
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-infoprice-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PATH_PROJECT: .
+
+jobs:
+  dev:
+    name: DEV - Validate & Deploy
+    runs-on: ubuntu-latest
+    environment: dev
+    # DEV roda no push para master OU manualmente com target=dev|both
+    if: >
+      (github.event_name == 'push' && github.ref == 'refs/heads/master')
+      || (github.event_name == 'workflow_dispatch' && (inputs.target == 'dev' || inputs.target == 'both'))
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true
+
+      - name: Instalar Databricks CLI
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y
+          sudo apt-get install -y zip
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sudo sh
+          databricks -v
+
+      - name: Mostrar Summary (DEV)
+        working-directory: ${{ env.PATH_PROJECT }}
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_AUTH_TYPE: oauth-m2m
+          DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+        run: |
+          echo "== [DEV] databricks bundle summary (target=${{ vars.ENV_NAME }}) =="
+          databricks bundle summary -t "${{ vars.ENV_NAME }}"
+
+      - name: Validar e Deploy (DEV)
+        working-directory: ${{ env.PATH_PROJECT }}
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_AUTH_TYPE: oauth-m2m
+          DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          echo "== [DEV] Validando bundle (target=${{ vars.ENV_NAME }}) =="
+          databricks bundle validate -t "${{ vars.ENV_NAME }}" --var run_as_spn=${{ vars.SPN_APP_ID }}
+          echo "== [DEV] Deploy bundle =="
+          databricks bundle deploy -t "${{ vars.ENV_NAME }}" --var run_as_spn=${{ vars.SPN_APP_ID }}
+
+  prod:
+    name: PROD - Validate & Deploy
+    runs-on: ubuntu-latest
+    environment: prod
+    needs: dev
+    if: >
+      always()
+      && github.event_name == 'workflow_dispatch'
+      && (inputs.target == 'prod' || inputs.target == 'both')
+      && (needs.dev.result == 'success' || needs.dev.result == 'skipped')
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true
+
+      - name: Instalar Databricks CLI
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y
+          sudo apt-get install -y zip
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sudo sh
+          databricks -v
+
+      - name: Mostrar Summary (PRD)
+        working-directory: ${{ env.PATH_PROJECT }}
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_AUTH_TYPE: oauth-m2m
+          DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+        run: |
+          echo "== [PRD] databricks bundle summary (target=${{ vars.ENV_NAME }}) =="
+          databricks bundle summary -t "${{ vars.ENV_NAME }}"
+
+      - name: Validar e Deploy (PRD)
+        working-directory: ${{ env.PATH_PROJECT }}
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_AUTH_TYPE: oauth-m2m
+          DATABRICKS_CLIENT_ID: ${{ vars.SPN_APP_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          echo "== [PRD] Validando bundle (target=${{ vars.ENV_NAME }}) =="
+          databricks bundle validate -t "${{ vars.ENV_NAME }}" --var run_as_spn=${{ vars.SPN_APP_ID }}
+          echo "== [PRD] Deploy bundle =="
+          databricks bundle deploy -t "${{ vars.ENV_NAME }}" --var run_as_spn=${{ vars.SPN_APP_ID }}
