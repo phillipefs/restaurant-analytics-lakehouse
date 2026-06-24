@@ -3,9 +3,13 @@ resources:
     my_catalog:
       name: restaurant_lakehouse_${bundle.target}
       comment: "Restaurant lakehouse catalog for ${bundle.target}."
+
       properties:
         environment: ${bundle.target}
-        purpose: "Restaurant analytics lakehouse"
+        project: ${bundle.name}
+        domain: restaurant_analytics
+        data_classification: internal
+        managed_by: databricks_asset_bundles
       grants:
         - principal: ${var.run_as_spn}
           privileges:
