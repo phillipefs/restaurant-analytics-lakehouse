@@ -4,4 +4,4 @@ End-to-end restaurant analytics lakehouse built with Azure Databricks, Event Hub
 
 ## Architecture
 
-![Restaurant Analytics Platform architecture](img/image_architecture.jpeg)
+![Restaurant Analytics Platform architecture](img/image_architecture.png)
