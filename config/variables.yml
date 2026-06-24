@@ -1,0 +1,3 @@
+variables:
+  run_as_spn:
+    description: Service principal application ID used to run bundle resources

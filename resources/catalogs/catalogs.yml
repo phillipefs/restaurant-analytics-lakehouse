@@ -1,0 +1,17 @@
+resources:
+  catalogs:
+    my_catalog:
+      name: restaurant_lakehouse_${bundle.target}
+      comment: "Restaurant lakehouse catalog for ${bundle.target}."
+      properties:
+        environment: ${bundle.target}
+        purpose: "Restaurant analytics lakehouse"
+      grants:
+        - principal: ${var.run_as_spn}
+          privileges:
+            - ALL_PRIVILEGES
+        - principal: admins
+          privileges:
+            - ALL_PRIVILEGES
+            - EXTERNAL_USE_SCHEMA
+            - MANAGE

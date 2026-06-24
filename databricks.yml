@@ -2,10 +2,6 @@ bundle:
   name: restaurant_analytics_lakehouse
   uuid: a040dfba-8274-43ba-92be-85c6ef0f17bf
 
-variables:
-  run_as_spn:
-    description: Service principal application ID used to run bundle resources
-
 artifacts:
   python_artifact:
     type: whl
@@ -13,6 +9,7 @@ artifacts:
     build: uv build --wheel
 
 include:
+  - config/*.yml
   - resources/**/*.yml
 
 sync:
