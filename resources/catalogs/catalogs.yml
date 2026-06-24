@@ -19,3 +19,6 @@ resources:
             - ALL_PRIVILEGES
             - EXTERNAL_USE_SCHEMA
             - MANAGE
+        - principal: account users
+          privileges:
+            - BROWSE
