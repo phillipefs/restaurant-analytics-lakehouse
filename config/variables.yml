@@ -1,3 +1,11 @@
 variables:
   run_as_spn:
     description: Service principal application ID used to run bundle resources
+
+  storage_credential_name:
+    description: Unity Catalog storage credential used by external locations
+    default: storage_credential
+
+  storage_account_name:
+    description: Azure Data Lake Storage account used by the lakehouse external locations
+    default: adlsmathlabdatalake

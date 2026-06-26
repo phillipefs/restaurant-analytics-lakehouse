@@ -4,7 +4,7 @@ resources:
       name: 00_landing
       catalog_name: ${resources.catalogs.restaurant_lakehouse.name}
       comment: "Raw ingestion schema for ${bundle.target}."
-      storage_root: abfss://landing@adlsmathlabdatalake.dfs.core.windows.net/restaurant_lakehouse
+      storage_root: ${resources.external_locations.external_location_landing.url}restaurant_lakehouse
       properties:
         environment: ${bundle.target}
         layer: landing
@@ -20,7 +20,7 @@ resources:
       name: 01_bronze
       catalog_name: ${resources.catalogs.restaurant_lakehouse.name}
       comment: "Raw ingestion schema for ${bundle.target}."
-      storage_root: abfss://bronze@adlsmathlabdatalake.dfs.core.windows.net/restaurant_lakehouse
+      storage_root: ${resources.external_locations.external_location_bronze.url}restaurant_lakehouse
       properties:
         environment: ${bundle.target}
         layer: bronze
@@ -36,7 +36,7 @@ resources:
       name: 02_silver
       catalog_name: ${resources.catalogs.restaurant_lakehouse.name}
       comment: "Cleaned and conformed schema for ${bundle.target}."
-      storage_root: abfss://silver@adlsmathlabdatalake.dfs.core.windows.net/restaurant_lakehouse
+      storage_root: ${resources.external_locations.external_location_silver.url}restaurant_lakehouse
       properties:
         environment: ${bundle.target}
         layer: silver
@@ -52,7 +52,7 @@ resources:
       name: 03_gold
       catalog_name: ${resources.catalogs.restaurant_lakehouse.name}
       comment: "Curated analytics schema for ${bundle.target}."
-      storage_root: abfss://gold@adlsmathlabdatalake.dfs.core.windows.net/restaurant_lakehouse
+      storage_root: ${resources.external_locations.external_location_gold.url}restaurant_lakehouse
       properties:
         environment: ${bundle.target}
         layer: gold

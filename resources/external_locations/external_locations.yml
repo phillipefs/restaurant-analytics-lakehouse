@@ -1,0 +1,73 @@
+resources:
+  external_locations:
+    external_location_landing:
+      name: landing
+      url: abfss://landing@${var.storage_account_name}.dfs.core.windows.net/
+      credential_name: ${var.storage_credential_name}
+      comment: "Landing external location for Restaurant Lakehouse."
+      lifecycle:
+        prevent_destroy: true
+      grants:
+        - principal: ${var.run_as_spn}
+          privileges:
+            - CREATE_MANAGED_STORAGE
+            - READ_FILES
+            - WRITE_FILES
+        - principal: admins
+          privileges:
+            - ALL_PRIVILEGES
+            - MANAGE
+
+    external_location_bronze:
+      name: bronze
+      url: abfss://bronze@${var.storage_account_name}.dfs.core.windows.net/
+      credential_name: ${var.storage_credential_name}
+      comment: "Bronze external location for Restaurant Lakehouse."
+      lifecycle:
+        prevent_destroy: true
+      grants:
+        - principal: ${var.run_as_spn}
+          privileges:
+            - CREATE_MANAGED_STORAGE
+            - READ_FILES
+            - WRITE_FILES
+        - principal: admins
+          privileges:
+            - ALL_PRIVILEGES
+            - MANAGE
+
+    external_location_silver:
+      name: silver
+      url: abfss://silver@${var.storage_account_name}.dfs.core.windows.net/
+      credential_name: ${var.storage_credential_name}
+      comment: "Silver external location for Restaurant Lakehouse."
+      lifecycle:
+        prevent_destroy: true
+      grants:
+        - principal: ${var.run_as_spn}
+          privileges:
+            - CREATE_MANAGED_STORAGE
+            - READ_FILES
+            - WRITE_FILES
+        - principal: admins
+          privileges:
+            - ALL_PRIVILEGES
+            - MANAGE
+
+    external_location_gold:
+      name: gold
+      url: abfss://gold@${var.storage_account_name}.dfs.core.windows.net/
+      credential_name: ${var.storage_credential_name}
+      comment: "Gold external location for Restaurant Lakehouse."
+      lifecycle:
+        prevent_destroy: true
+      grants:
+        - principal: ${var.run_as_spn}
+          privileges:
+            - CREATE_MANAGED_STORAGE
+            - READ_FILES
+            - WRITE_FILES
+        - principal: admins
+          privileges:
+            - ALL_PRIVILEGES
+            - MANAGE
