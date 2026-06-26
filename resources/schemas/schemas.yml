@@ -1,0 +1,65 @@
+resources:
+  schemas:
+    landing:
+      name: 00_landing
+      catalog_name: ${resources.catalogs.restaurant_lakehouse.name}
+      comment: "Raw ingestion schema for ${bundle.target}."
+      storage_root: abfss://landing@adlsmathlabdatalake.dfs.core.windows.net/restaurant_lakehouse
+      properties:
+        environment: ${bundle.target}
+        layer: landing
+        purpose: landing_zone
+      grants:
+        - principal: ${var.run_as_spn}
+          privileges:
+            - ALL_PRIVILEGES
+            - EXTERNAL_USE_SCHEMA
+            - MANAGE
+
+    bronze:
+      name: 01_bronze
+      catalog_name: ${resources.catalogs.restaurant_lakehouse.name}
+      comment: "Raw ingestion schema for ${bundle.target}."
+      storage_root: abfss://bronze@adlsmathlabdatalake.dfs.core.windows.net/restaurant_lakehouse
+      properties:
+        environment: ${bundle.target}
+        layer: bronze
+        purpose: raw_ingestion
+      grants:
+        - principal: ${var.run_as_spn}
+          privileges:
+            - ALL_PRIVILEGES
+            - EXTERNAL_USE_SCHEMA
+            - MANAGE
+
+    silver:
+      name: 02_silver
+      catalog_name: ${resources.catalogs.restaurant_lakehouse.name}
+      comment: "Cleaned and conformed schema for ${bundle.target}."
+      storage_root: abfss://silver@adlsmathlabdatalake.dfs.core.windows.net/restaurant_lakehouse
+      properties:
+        environment: ${bundle.target}
+        layer: silver
+        purpose: cleaned_conformed
+      grants:
+        - principal: ${var.run_as_spn}
+          privileges:
+            - ALL_PRIVILEGES
+            - EXTERNAL_USE_SCHEMA
+            - MANAGE
+
+    gold:
+      name: 03_gold
+      catalog_name: ${resources.catalogs.restaurant_lakehouse.name}
+      comment: "Curated analytics schema for ${bundle.target}."
+      storage_root: abfss://gold@adlsmathlabdatalake.dfs.core.windows.net/restaurant_lakehouse
+      properties:
+        environment: ${bundle.target}
+        layer: gold
+        purpose: curated_analytics
+      grants:
+        - principal: ${var.run_as_spn}
+          privileges:
+            - ALL_PRIVILEGES
+            - EXTERNAL_USE_SCHEMA
+            - MANAGE

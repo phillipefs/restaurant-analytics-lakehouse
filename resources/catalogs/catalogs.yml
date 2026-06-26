@@ -1,6 +1,6 @@
 resources:
   catalogs:
-    my_catalog:
+    restaurant_lakehouse:
       name: restaurant_lakehouse_${bundle.target}
       comment: "Restaurant lakehouse catalog for ${bundle.target}."
 
@@ -14,6 +14,8 @@ resources:
         - principal: ${var.run_as_spn}
           privileges:
             - ALL_PRIVILEGES
+            - EXTERNAL_USE_SCHEMA
+            - MANAGE
         - principal: admins
           privileges:
             - ALL_PRIVILEGES
