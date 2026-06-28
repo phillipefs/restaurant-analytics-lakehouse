@@ -3,6 +3,8 @@ resources:
     job_restaurant_cdc_ingestion:
       name: job_restaurant_cdc_ingestion
       max_concurrent_runs: 1
+      tags:
+        process: cdc_restaurant
       schedule:
         quartz_cron_expression: "0 0 13 * * ?"
         timezone_id: America/Sao_Paulo
@@ -14,6 +16,8 @@ resources:
             policy_id: 0005F147C3FA0AA4
             apply_policy_default_values: true
             num_workers: 1
+            custom_tags:
+              process: cdc_restaurant
       tasks:
         - task_key: start_gateway
           description: Start the Lakeflow CDC ingestion gateway before the triggered ingestion run.
@@ -24,8 +28,10 @@ resources:
             base_parameters:
               action: start
               pipeline_id: ${resources.pipelines.pipeline_gw_ingestion_restaurantops.id}
-              timeout_seconds: "900"
+              timeout_seconds: "1800"
               poll_seconds: "15"
+              ready_grace_seconds: "60"
+              expected_datasets: customers,historical_orders,menu_items,restaurants,reviews
 
         - task_key: run_ingestion_pipeline
           description: Run the triggered Lakeflow CDC ingestion pipeline.

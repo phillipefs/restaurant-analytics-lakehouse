@@ -24,6 +24,8 @@ sync:
     - README.md
     - requirements.txt
     - doc/**
+    - "**/__pycache__/**"
+    - "**/*.pyc"
 
 targets:
   dev:
@@ -34,7 +36,7 @@ targets:
     presets:
       artifacts_dynamic_version: true
       tags:
-        env: development
+        env: ${bundle.target}
         project: ${bundle.name}
     run_as:
       service_principal_name: ${var.run_as_spn}
@@ -46,7 +48,7 @@ targets:
       root_path: /Workspace/projects/${bundle.name}
     presets:
       tags:
-        env: production
+        env: ${bundle.target}
         project: ${bundle.name}
     run_as:
       service_principal_name: ${var.run_as_spn}

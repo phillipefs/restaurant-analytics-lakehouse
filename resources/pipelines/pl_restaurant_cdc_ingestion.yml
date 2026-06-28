@@ -2,6 +2,8 @@ resources:
   pipelines:
     pl_restaurant_cdc_ingestion:
       name: pl_restaurant_cdc_ingestion
+      tags:
+        process: cdc_restaurant
       continuous: false
       ingestion_definition:
         ingestion_gateway_id: ${resources.pipelines.pipeline_gw_ingestion_restaurantops.id}

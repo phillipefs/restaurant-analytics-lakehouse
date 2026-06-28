@@ -2,6 +2,8 @@ resources:
   pipelines:
     pipeline_gw_ingestion_restaurantops:
       name: gw_restaurant_cdc_ingestion
+      tags:
+        process: cdc_restaurant
       clusters:
         - label: default
           policy_id: 0005F147C3FA0AA4
