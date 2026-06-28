@@ -24,8 +24,6 @@ sync:
     - README.md
     - requirements.txt
     - doc/**
-    - "**/__pycache__/**"
-    - "**/*.pyc"
 
 targets:
   dev:
