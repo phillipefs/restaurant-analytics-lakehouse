@@ -13,7 +13,7 @@ resources:
         - job_cluster_key: pipeline_control
           new_cluster:
             spark_version: 15.4.x-scala2.12
-            policy_id: 0005F147C3FA0AA4
+            policy_id: ${var.compute_policy_id}
             apply_policy_default_values: true
             num_workers: 1
             custom_tags:

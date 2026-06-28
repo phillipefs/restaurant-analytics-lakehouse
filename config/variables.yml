@@ -2,6 +2,10 @@ variables:
   run_as_spn:
     description: Service principal application ID used to run bundle resources
 
+  compute_policy_id:
+    description: Databricks compute policy ID used by CDC gateway and orchestration job clusters
+    default: 0005F147C3FA0AA4
+
   storage_credential_name:
     description: Unity Catalog storage credential used by external locations
     default: storage_credential

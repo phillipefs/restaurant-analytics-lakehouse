@@ -6,7 +6,7 @@ resources:
         process: cdc_restaurant
       clusters:
         - label: default
-          policy_id: 0005F147C3FA0AA4
+          policy_id: ${var.compute_policy_id}
           apply_policy_default_values: true
       gateway_definition:
         connection_name: cnn_restaurantops
