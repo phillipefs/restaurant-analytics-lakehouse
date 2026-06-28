@@ -19,7 +19,7 @@ resources:
           description: Start the Lakeflow CDC ingestion gateway before the triggered ingestion run.
           job_cluster_key: pipeline_control
           notebook_task:
-            notebook_path: ${workspace.file_path}/notebooks/operations/manage_pipeline_gateway.py
+            notebook_path: ${workspace.file_path}/notebooks/operations/manage_pipeline_gateway
             source: WORKSPACE
             base_parameters:
               action: start
@@ -42,7 +42,7 @@ resources:
           run_if: ALL_DONE
           job_cluster_key: pipeline_control
           notebook_task:
-            notebook_path: ${workspace.file_path}/notebooks/operations/manage_pipeline_gateway.py
+            notebook_path: ${workspace.file_path}/notebooks/operations/manage_pipeline_gateway
             source: WORKSPACE
             base_parameters:
               action: stop
