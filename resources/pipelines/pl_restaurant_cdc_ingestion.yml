@@ -1,0 +1,16 @@
+resources:
+  pipelines:
+    pl_restaurant_cdc_ingestion:
+      name: pl_restaurant_cdc_ingestion
+      continuous: false
+      ingestion_definition:
+        ingestion_gateway_id: ${resources.pipelines.pipeline_gw_ingestion_restaurantops.id}
+        objects:
+          - schema:
+              source_catalog: sqls-mathlab-database
+              source_schema: restaurant
+              destination_catalog: restaurant_lakehouse_dev
+              destination_schema: 01_bronze
+        connector_type: CDC
+      catalog: restaurant_lakehouse_dev
+      schema: 01_bronze

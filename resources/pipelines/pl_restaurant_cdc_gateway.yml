@@ -1,0 +1,16 @@
+resources:
+  pipelines:
+    pipeline_gw_ingestion_restaurantops:
+      name: gw_restaurant_cdc_ingestion
+      clusters:
+        - label: default
+          policy_id: 0005F147C3FA0AA4
+          apply_policy_default_values: true
+      gateway_definition:
+        connection_name: cnn_restaurantops
+        gateway_storage_catalog: restaurant_lakehouse_dev
+        gateway_storage_schema: 00_landing
+        gateway_storage_name: gw_restaurant_cdc_ingestion
+      schema: 00_landing
+      continuous: true
+      catalog: restaurant_lakehouse_dev
