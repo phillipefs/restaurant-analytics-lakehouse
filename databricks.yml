@@ -16,6 +16,14 @@ sync:
   include:
     - notebooks/**
     - src/**
+  exclude:
+    - img/**
+    - .gitignore
+    - LICENSE
+    - pyproject.toml
+    - README.md
+    - requirements.txt
+    - doc/**
 
 targets:
   dev:
