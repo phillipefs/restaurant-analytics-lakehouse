@@ -1,7 +1,7 @@
 variables:
   run_as_spn:
     description: Service principal application ID used to run bundle resources
-    default: ""
+    default: "94a0841a-2472-4fe0-8264-70d16f025255" #Service Principal Development
 
   compute_policy_id:
     description: Databricks compute policy ID used by CDC gateway and orchestration job clusters
