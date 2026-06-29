@@ -33,6 +33,8 @@ targets:
       root_path: /Workspace/projects/${bundle.name}
     presets:
       artifacts_dynamic_version: true
+      trigger_pause_status: PAUSED
+      jobs_max_concurrent_runs: 1
       tags:
         env: ${bundle.target}
         project: ${bundle.name}
